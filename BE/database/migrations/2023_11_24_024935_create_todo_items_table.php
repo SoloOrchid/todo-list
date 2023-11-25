@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('todo_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('list_id')->constrained(table: 'todo_lists');
-            $table->foreignId('status_id')->constrained(table: 'statuses');
+            $table->foreignId('list_id')->constrained(table: 'todo_lists')->cascadeOnDelete();
             $table->string('title');
-            $table->string('description');
+            $table->boolean('check');
             $table->timestamps();
         });
     }

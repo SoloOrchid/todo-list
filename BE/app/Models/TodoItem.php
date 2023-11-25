@@ -11,9 +11,12 @@ class TodoItem extends Model
 
     protected $fillable = [
         'list_id',
-        'status_id',
         'title',
-        'description',
+        'check',
+    ];
+
+    protected $casts = [
+        'check' => 'boolean',
     ];
 
     /**

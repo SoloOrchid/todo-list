@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TodoItemController;
 use App\Http\Controllers\TodoListController;
 use Illuminate\Http\Request;
@@ -25,6 +26,10 @@ Route::middleware('auth:api')->group(function () {
         return $request->user();
     });
 
+    Route::get('/authCheck', function () {
+        return response()->json(['status' => 'success']);
+    });
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::prefix('/list')->group(function () {
@@ -32,15 +37,22 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{todoList}', [TodoListController::class, 'show']);
         Route::post('/', [TodoListController::class, 'create']);
         Route::put('/{todoList}', [TodoListController::class, 'update']);
-        Route::delete('/{id}', [TodoListController::class, 'destroy']);
+        Route::delete('/{todoList}', [TodoListController::class, 'destroy']);
     });
 
     Route::prefix('/item')->group(function () {
         Route::get('/', [TodoItemController::class, 'index']);
         Route::get('/{todoItem}', [TodoItemController::class, 'show']);
         Route::post('/{todoList}', [TodoItemController::class, 'create']);
-        Route::put('/{todoList}/{item}', [TodoItemController::class, 'update']);
-        Route::delete('/{todoList}/{item}', [TodoItemController::class, 'delete']);
+        Route::put('/{todoList}/{todoItem}', [TodoItemController::class, 'update']);
+        Route::delete('/{todoList}/{todoItem}', [TodoItemController::class, 'destroy']);
+    });
+
+    Route::prefix('/status')->group(function () {
+        Route::get('/', [StatusController::class, 'index']);
+        Route::post('/', [StatusController::class, 'create']);
+        Route::put('/{status}', [StatusController::class, 'update']);
+        Route::delete('/{status}', [StatusController::class, 'destroy']);
     });
 
 });

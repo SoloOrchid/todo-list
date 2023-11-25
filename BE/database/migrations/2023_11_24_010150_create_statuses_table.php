@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained(table: 'users')->cascadeOnDelete();
             $table->string('status');
             $table->string('color');
             $table->timestamps();

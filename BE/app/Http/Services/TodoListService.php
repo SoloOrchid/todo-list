@@ -22,13 +22,15 @@ class TodoListService
             'description' => $input['description'],
         ]);
     }
-    public function update(TodoList $todoList, array $input, Status $status)
+    public function update(TodoList $todoList, array $input, $status = null)
     {
         $todoList->update([
-            'status_id' => $status->id,
+            'status_id' => $status->id ?? $todoList->status_id,
             'title' => $input['title'],
             'description' => $input['description'],
         ]);
+
+        return TodoList::find($todoList->id);
     }
     public function delete(TodoList $todoList)
     {

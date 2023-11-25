@@ -18,11 +18,6 @@ class TodoList extends Model
         'description',
     ];
 
-//    protected static function booted(): void
-//    {
-//        static::addGlobalScope(new NoSubScope);
-//    }
-
     /**
      * the owner of the list and all items created under it
      *
@@ -31,18 +26,6 @@ class TodoList extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    // Relationship to itself
-    public function sublists()
-    {
-        return $this->hasMany(TodoList::class, 'sub_of_id');
-    }
-
-    // Relationship to its parent
-    public function parent()
-    {
-        return $this->belongsTo(TodoList::class, 'sub_of_id');
     }
 
     public function items()

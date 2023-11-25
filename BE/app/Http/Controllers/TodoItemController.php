@@ -32,15 +32,10 @@ class TodoItemController extends Controller
     {
         $input = $request->validate([
             'title' => 'required|string',
-            'description' => 'required|string'
+            'check' => 'required|boolean'
         ]);
 
-        $status = null;
-        if($request->has('status')) {
-            $status = Status::where('status', $request->query('status'))->first();
-        }
-
-        return new TodoItemResource($this->todoItemService->create($todoList, $input, $status));
+        return new TodoItemResource($this->todoItemService->create($todoList, $input));
     }
 
     /**
@@ -58,24 +53,22 @@ class TodoItemController extends Controller
     {
         $input = $request->validate([
             'title' => 'required|string',
-            'description' => 'required|string',
-            'status' => 'required|numeric'
+            'check' => 'required|boolean',
         ]);
+
+        //dd($todoItem, $todoList);
 
         if($todoItem->list_id != $todoList->id) {
             return response()->json('this item belongs to another list', 404);
         }
 
-        $status = Status::findOrFail($input['id']);
-        $this->todoItemService->update($todoItem, $input);
-
-        return new TodoItemResource(TodoItem::find($todoItem->id));
+        return new TodoItemResource($this->todoItemService->update($todoItem, $input));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TodoItem $todoItem)
+    public function destroy(TodoList $todoList, TodoItem $todoItem)
     {
         $todoItem->delete();
 

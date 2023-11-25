@@ -21,7 +21,11 @@ class TodoListController extends Controller
      */
     public function index(Request $request)
     {
-        return TodoListResource::collection(TodoList::with(['sublists', 'parent'])->where('user_id', $request->user()->id)->whereNull('sub_of_id')->get());
+        if($request->query('done') === 'true') {
+            return TodoListResource::collection(TodoList::where('user_id', $request->user()->id)->whereNull('sub_of_id')->orderBy('id', 'DESC')->get());
+        }
+
+        return TodoListResource::collection(TodoList::where('status_id', '!=', 2)->where('user_id', $request->user()->id)->whereNull('sub_of_id')->orderBy('id', 'DESC')->get());
     }
 
     /**
@@ -63,14 +67,15 @@ class TodoListController extends Controller
         $input = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
-            'status' => 'required|numeric'
+            'status' => 'numeric'
         ]);
 
-        $status = Status::findOrFail($input['status']);
+        $status = null;
+        if(isset($input['status'])) {
+            $status = Status::findOrFail($input['status']);
+        }
 
-        $this->todoListService->update($todoList, $input, $status);
-
-        return new TodoListResource(TodoList::find($todoList->id));
+        return new TodoListResource($this->todoListService->update($todoList, $input, $status));
     }
 
     /**
@@ -78,7 +83,7 @@ class TodoListController extends Controller
      */
     public function destroy(TodoList $todoList)
     {
-        $todoList->delete();
+        $todoList->forceDelete();
 
         return response()->json('', 204);
     }
